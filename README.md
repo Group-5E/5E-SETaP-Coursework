@@ -13,9 +13,10 @@
 ### Data Collection -> George, David, Joe, Lem, Baz
 - Interviews/Focus Groups 
 - Participant information sheet & Consent form 
-- User requirements 
 
 ### System Requirements -> Jasper & Safia
+- User requirements
+  
 - Functional Requirements
 - Non-functional Requirements
 
