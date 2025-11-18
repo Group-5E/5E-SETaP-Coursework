@@ -10,13 +10,12 @@
 - Lem Wilton ->      up2276395 -> lemonizite
 
 ## Team Divide - Chapter 1
-### Data Collection -> George, David, Joe, Lem, Baz
+### Data Collection -> Everyone
 - Interviews/Focus Groups 
 - Participant information sheet & Consent form 
 
-### System Requirements -> Jasper & Safia
+### System Requirements -> Everyone
 - User requirements
-  
 - Functional Requirements
 - Non-functional Requirements
 
