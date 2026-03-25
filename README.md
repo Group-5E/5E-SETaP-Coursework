@@ -20,15 +20,15 @@
 - Database development
 - API Development
 
-## Team Divide - Iteration 1
-### Data Collection -> Everyone
-- Interviews/Focus Groups 
-- Participant information sheet & Consent form 
+## ~~Team Divide - Iteration 1~~ ✅
+### ~~Data Collection -> Everyone~~ ✅
+~~- Interviews/Focus Groups~~ ✅
+~~- Participant information sheet & Consent form~~ ✅
 
-### System Requirements -> Everyone
-- User requirements
-- Functional Requirements
-- Non-functional Requirements
+### ~~System Requirements -> Everyone~~ ✅
+~~- User requirements~~ ✅
+~~- Functional Requirements~~ ✅
+~~- Non-functional Requirements~~ ✅
 
 
 ## Links
