@@ -42,3 +42,21 @@ class Household(Base):
     created_by                  = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at                  = Column(DateTime, server_default=func.now())
     is_active                   = Column(Boolean, default=True, nullable=False)
+
+# --/ !!! >
+# --[ This class links users to households and tracks their role and membership status
+# --[ A user can only appear once per household (enforced by UniqueConstraint on user_id + household_id)
+# --[ left_at being NULL means that the user is still active in the household
+class HouseholdMember(Base):
+    __tablename__ = "household_members"
+    __table_args__ = (
+        UniqueConstraint("user_id", "household_id", name="uq_user_household"),
+    )
+
+    id           = Column(Integer, primary_key=True)
+    user_id      = Column(Integer, ForeignKey("users.id"),      nullable=False)
+    household_id = Column(Integer, ForeignKey("households.id"), nullable=False)
+    role         = Column(String(10), default="member",         nullable=False)  # admin or member
+    joined_at    = Column(DateTime, server_default=func.now())
+    left_at      = Column(DateTime)          # NULL = still active
+    is_active    = Column(Boolean, default=True, nullable=False)
