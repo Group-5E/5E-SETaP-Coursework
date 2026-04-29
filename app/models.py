@@ -83,3 +83,22 @@ class Expense(Base):
     expense_date                = Column(DateTime, nullable=False)
     created_at                  = Column(DateTime, server_default=func.now())
     is_deleted                  = Column(Boolean, default=False, nullable=False)                    # deletes for users but keeps for debt tracking 
+
+
+# --/ !!! >
+# --[ This class represents how an expense is split between household members
+# --[ amount_owed is always stored as the resolved £ value regardless of whether the original split was equal, percentage, or fixed
+# --[ is_settled is flipped when a payment is recorded
+class ExpenseSplit(Base):
+    __tablename__ = "expense_splits"
+    __table_args__ = (
+        UniqueConstraint("expense_id", "user_id", name="uq_split_per_user"),
+        CheckConstraint("amount_owed >= 0", name="ck_split_positive"),
+    )
+
+    id                          = Column(Integer, primary_key=True)
+    expense_id                  = Column(Integer, ForeignKey("expenses.id"), nullable=False)
+    user_id                     = Column(Integer, ForeignKey("users.id"),    nullable=False)
+    amount_owed                 = Column(Numeric(10, 2), nullable=False)                            # always the £ amount, never a %
+    is_settled                  = Column(Boolean, default=False, nullable=False)
+    settled_at                  = Column(DateTime)                                                  # NULL until marked as settled
