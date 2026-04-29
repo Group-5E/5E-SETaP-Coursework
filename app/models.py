@@ -30,6 +30,13 @@ class User(Base):
     created_at                  = Column(DateTime, server_default=func.now())
     last_active_at              = Column(DateTime, onupdate=func.now())
 
+    # --[ Relationships !!! >
+    memberships       = relationship("HouseholdMember", back_populates="user")
+    expenses_paid     = relationship("Expense",         back_populates="paid_by")
+    splits            = relationship("ExpenseSplit",     back_populates="user")
+    payments_sent     = relationship("Payment", foreign_keys="Payment.payer_id", back_populates="payer")
+    payments_received = relationship("Payment", foreign_keys="Payment.payee_id", back_populates="payee")
+
 # --/ !!! >
 # --[ This class represents a shared student property, like an apartment or dorm room
 # --[ A household groups students together for expense tracking
@@ -43,6 +50,12 @@ class Household(Base):
     created_by                  = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at                  = Column(DateTime, server_default=func.now())
     is_active                   = Column(Boolean, default=True, nullable=False)
+
+    # --[ Relationships !!! >
+    creator  = relationship("User",            foreign_keys=[created_by])
+    members  = relationship("HouseholdMember", back_populates="household")
+    expenses = relationship("Expense",         back_populates="household")
+    payments = relationship("Payment",         back_populates="household")
 
 # --/ !!! >
 # --[ This class links users to households and tracks their role and membership status
@@ -61,6 +74,10 @@ class HouseholdMember(Base):
     joined_at                   = Column(DateTime, server_default=func.now())
     left_at                     = Column(DateTime)                                                 # NULL = still active
     is_active                   = Column(Boolean, default=True, nullable=False)
+    
+    # --[ Relationships !!! >
+    user      = relationship("User",      back_populates="memberships")
+    household = relationship("Household", back_populates="members")
 
 # --/ !!! >
 # --[ This class represents an expense paid by a student on behalf of a household
@@ -84,6 +101,10 @@ class Expense(Base):
     created_at                  = Column(DateTime, server_default=func.now())
     is_deleted                  = Column(Boolean, default=False, nullable=False)                    # deletes for users but keeps for debt tracking 
 
+    # --[ Relationships !!! >
+    household = relationship("Household",    back_populates="expenses")
+    paid_by   = relationship("User",         back_populates="expenses_paid")
+    splits    = relationship("ExpenseSplit", back_populates="expense", cascade="all, delete-orphan")
 
 # --/ !!! >
 # --[ This class represents how an expense is split between household members
@@ -103,6 +124,10 @@ class ExpenseSplit(Base):
     is_settled                  = Column(Boolean, default=False, nullable=False)
     settled_at                  = Column(DateTime)                                                  # NULL until marked as settled
 
+    # --[ Relationships !!! >
+    expense = relationship("Expense", back_populates="splits")
+    user    = relationship("User",    back_populates="splits")
+
 # --/ !!! >
 # --[ This class records direct payments between students to settle debts
 # --[ When a payment is made, the relevant ExpenseSplit rows are marked as settled
@@ -115,10 +140,15 @@ class Payment(Base):
         CheckConstraint("amount > 0",           name="ck_payment_positive"),
     )
 
-    id           = Column(Integer, primary_key=True)
-    household_id = Column(Integer, ForeignKey("households.id"), nullable=False)
-    payer_id     = Column(Integer, ForeignKey("users.id"),      nullable=False)
-    payee_id     = Column(Integer, ForeignKey("users.id"),      nullable=False)
-    amount       = Column(Numeric(10, 2), nullable=False)
-    note         = Column(String(255))
-    created_at   = Column(DateTime, server_default=func.now())    
+    id                          = Column(Integer, primary_key=True)
+    household_id                = Column(Integer, ForeignKey("households.id"), nullable=False)
+    payer_id                    = Column(Integer, ForeignKey("users.id"),      nullable=False)
+    payee_id                    = Column(Integer, ForeignKey("users.id"),      nullable=False)
+    amount                      = Column(Numeric(10, 2), nullable=False)
+    note                        = Column(String(255))
+    created_at                  = Column(DateTime, server_default=func.now())    
+
+    # --[ Relationships !!! >
+    household = relationship("Household", back_populates="payments")
+    payer     = relationship("User", foreign_keys=[payer_id], back_populates="payments_sent")
+    payee     = relationship("User", foreign_keys=[payee_id], back_populates="payments_received")
