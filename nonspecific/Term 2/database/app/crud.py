@@ -101,3 +101,18 @@ def add_member(session: Session, user_id: int, household_id: int):
     session.commit()
     session.refresh(member)
     return member
+
+# --[ REMOVE MEMBER !!! >
+# --[ This function removes a member from a household by deactivating their membership
+def remove_member(session: Session, user_id: int, household_id: int):
+    member = session.query(HouseholdMember).filter_by(
+        user_id=user_id,
+        household_id=household_id,
+        is_active=True
+    ).first()
+    if not member:
+        return None
+    member.is_active = False
+    member.left_at = datetime.now()
+    session.commit()
+    return member
