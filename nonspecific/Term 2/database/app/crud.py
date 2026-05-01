@@ -75,3 +75,8 @@ def create_household(session: Session, name: str, created_by: int, address: str 
     session.commit()
     session.refresh(household)
     return household
+
+# --[ GET HOUSEHOLD !!! >
+# --[ This function fetches a household by ID and returns None if not found
+def get_household(session: Session, household_id: int):
+    return session.get(Household, household_id)
