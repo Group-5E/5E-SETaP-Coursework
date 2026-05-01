@@ -24,3 +24,6 @@ def create_user(session: Session, username: str, email: str, password_hash: str,
     session.refresh(user)
     return user
 
+# --[ This function fetches a student account by ID and returns None if not found
+def get_user(session: Session, user_id: int):
+    return session.get(User, user_id)
