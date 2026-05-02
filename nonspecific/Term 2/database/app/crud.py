@@ -174,3 +174,17 @@ def delete_expense(session: Session, expense_id: int):
     expense.is_deleted = True
     session.commit()
     return expense
+
+# --/ !!! >
+# --[ EXPENSE SPLIT CRUD FUNCTIONS
+
+# --[ SETTLE SPLIT !!! >
+# --[ This function flags an individual split as settled and records the time
+def settle_split(session: Session, split_id: int):
+    split = session.get(ExpenseSplit, split_id)
+    if not split:
+        return None
+    split.is_settled = True
+    split.settled_at = datetime.now()
+    session.commit()
+    return split
