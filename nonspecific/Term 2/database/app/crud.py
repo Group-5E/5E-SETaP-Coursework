@@ -164,3 +164,13 @@ def get_expenses(session: Session, household_id: int):
         household_id=household_id,
         is_deleted=False
     ).all()
+
+# --[ DELETE EXPENSE !!! >
+# --[ This function soft deletes an expense but preserves the record for data purposes
+def delete_expense(session: Session, expense_id: int):
+    expense = session.get(Expense, expense_id)
+    if not expense:
+        return None
+    expense.is_deleted = True
+    session.commit()
+    return expense
